@@ -50,6 +50,7 @@ val repositoryModule = module {
 val viewModelModule = module {
     viewModel { MovieListViewModel(movieRepository = get()) }
     viewModel { MovieDetailViewModel(movieRepository = get()) }
+    //viewModel { LoginViewModel(api = get()) }
 }
 
 val appModules = listOf(networkModule, repositoryModule, viewModelModule)
@@ -64,12 +65,13 @@ private fun createApiService(okHttpClient: OkHttpClient, gson: Gson): MovieApi {
         .create(MovieApi::class.java)
 }
 
+
+//Okhttp client
 private fun createHttpClient(
     httpLoggingInterceptor: HttpLoggingInterceptor,
     connectionCheckerInterceptor: Interceptor,
     authInterceptor: Interceptor
 ): OkHttpClient {
-
     val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(60L, TimeUnit.SECONDS)
         .readTimeout(60L, TimeUnit.SECONDS)
@@ -81,8 +83,11 @@ private fun createHttpClient(
     return okHttpClient.build()
 }
 
+//Gson for json parsing
 private fun createGson() = GsonBuilder().create()
 
+
+//Logging interceptor
 private fun createLoggingInterceptor(): HttpLoggingInterceptor {
     return HttpLoggingInterceptor(
         HttpLoggingInterceptor.Logger { message -> Log.d("OkHttp", message)}
@@ -91,6 +96,7 @@ private fun createLoggingInterceptor(): HttpLoggingInterceptor {
     }
 }
 
+//Network connection checker
 private fun createConnectionCheckerInterceptor(context: Context): Interceptor {
     return Interceptor { chain: Interceptor.Chain ->
         val connectivityManager =
@@ -105,6 +111,7 @@ private fun createConnectionCheckerInterceptor(context: Context): Interceptor {
     }
 }
 
+//Auth interceptor for Service API
 private fun createAuthInterceptor(): Interceptor {
     return Interceptor { chain ->
         val newUrl = chain.request().url()
