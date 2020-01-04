@@ -1,4 +1,4 @@
-package com.mobile.moviedatabase.features.movies.data
+package com.mobile.moviedatabase.data.models
 
 
 import com.google.gson.annotations.SerializedName

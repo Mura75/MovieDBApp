@@ -1,6 +1,8 @@
-package com.mobile.moviedatabase.features.movies.data
+package com.mobile.moviedatabase.data.repository
 
 import com.mobile.moviedatabase.core.network.MovieApi
+import com.mobile.moviedatabase.data.models.Movie
+import com.mobile.moviedatabase.data.models.MoviesResponse
 
 interface MovieRepository {
     suspend fun getMovies(page: Int): MoviesResponse?

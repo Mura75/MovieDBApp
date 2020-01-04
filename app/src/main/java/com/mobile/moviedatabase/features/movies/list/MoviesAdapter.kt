@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseViewHolder
 import com.mobile.moviedatabase.core.di.GlideApp
-import com.mobile.moviedatabase.features.movies.data.Movie
+import com.mobile.moviedatabase.data.models.Movie
 import com.mobile.moviedatabase.core.utils.AppConstants
 
 class MoviesAdapter(

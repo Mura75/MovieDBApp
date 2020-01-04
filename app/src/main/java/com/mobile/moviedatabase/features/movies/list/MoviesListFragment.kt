@@ -3,7 +3,6 @@ package com.mobile.moviedatabase.features.movies.list
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseFragment
 import com.mobile.moviedatabase.core.utils.AppConstants
 import com.mobile.moviedatabase.core.utils.PaginationListener
-import com.mobile.moviedatabase.features.movies.data.Movie
+import com.mobile.moviedatabase.data.models.Movie
 import org.koin.android.ext.android.inject
 
 
