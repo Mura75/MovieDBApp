@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.annotation.GlideModule
 import com.mobile.moviedatabase.features.movies.detail.MovieDetailViewModel
+import okhttp3.Response
 
 
 val networkModule = module {
@@ -89,40 +90,46 @@ private fun createGson() = GsonBuilder().create()
 
 //Logging interceptor
 private fun createLoggingInterceptor(): HttpLoggingInterceptor {
-    return HttpLoggingInterceptor(
-        HttpLoggingInterceptor.Logger { message -> Log.d("OkHttp", message)}
-    ).apply {
+    return HttpLoggingInterceptor(logger = object : HttpLoggingInterceptor.Logger {
+        override fun log(message: String) {
+            Log.d("OkHttp", message)
+        }
+    }).apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 }
 
 //Network connection checker
 private fun createConnectionCheckerInterceptor(context: Context): Interceptor {
-    return Interceptor { chain: Interceptor.Chain ->
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netInfo = connectivityManager.activeNetworkInfo
-        val isConnected = netInfo != null && netInfo.isConnected
-        if (!isConnected) {
-            throw NoConnectionException(R.string.no_network)
-        } else {
-            chain.proceed(chain.request())
+    return object : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo = connectivityManager.activeNetworkInfo
+            val isConnected = netInfo != null && netInfo.isConnected
+            if (!isConnected) {
+                throw NoConnectionException(R.string.no_network)
+            } else {
+                return chain.proceed(chain.request())
+            }
         }
     }
 }
 
 //Auth interceptor for Service API
 private fun createAuthInterceptor(): Interceptor {
-    return Interceptor { chain ->
-        val newUrl = chain.request().url()
-            .newBuilder()
-            .addQueryParameter("api_key", AppConstants.API_KEY)
-            .build()
-        val newRequest = chain.request()
-            .newBuilder()
-            .url(newUrl)
-            .build()
-        chain.proceed(newRequest)
+    return  object : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val newUrl = chain.request().url
+                .newBuilder()
+                .addQueryParameter("api_key", AppConstants.API_KEY)
+                .build()
+            val newRequest = chain.request()
+                .newBuilder()
+                .url(newUrl)
+                .build()
+            return chain.proceed(newRequest)
+        }
     }
 }
 
