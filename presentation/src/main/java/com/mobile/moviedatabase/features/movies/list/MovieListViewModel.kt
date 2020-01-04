@@ -3,6 +3,7 @@ package com.mobile.moviedatabase.features.movies.list
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.Movie
+import com.mobile.domain.interactor.GetMoviesInteractor
 import com.mobile.domain.repository.MovieRepository
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.extensions.launchSafe
@@ -11,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MovieListViewModel(
-    private val movieRepository: MovieRepository
+    private val getMoviesInteractor: GetMoviesInteractor
 ) : BaseViewModel() {
 
     val liveData = MutableLiveData<State>()
@@ -21,14 +22,11 @@ class MovieListViewModel(
     }
 
     override fun handleError(e: Throwable) {
-        liveData.value =
-            State.HideLoading
+        liveData.value = State.HideLoading
         if (e is NoConnectionException) {
-            liveData.value =
-                State.IntError(e.messageInt)
+            liveData.value = State.IntError(e.messageInt)
         } else {
-            liveData.value =
-                State.Error(e.localizedMessage)
+            liveData.value = State.Error(e.localizedMessage)
         }
     }
 
@@ -39,7 +37,7 @@ class MovieListViewModel(
                     State.ShowLoading
             }
             val result = withContext(Dispatchers.IO) {
-                movieRepository.getMovies(page)
+                getMoviesInteractor.getMovies(page)
             }
             Log.d("result_movies", result.second.size.toString())
             Log.d("result_movies_pages", result.first.toString())

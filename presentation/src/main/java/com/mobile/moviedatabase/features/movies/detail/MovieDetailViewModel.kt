@@ -2,6 +2,7 @@ package com.mobile.moviedatabase.features.movies.detail
 
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.Movie
+import com.mobile.domain.interactor.MovieDetailInteractor
 import com.mobile.domain.repository.MovieRepository
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
@@ -10,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MovieDetailViewModel(
-    private val movieRepository: MovieRepository
+    private val movieDetailInteractor: MovieDetailInteractor
 ): BaseViewModel() {
 
     val liveData = MutableLiveData<State>()
@@ -19,7 +20,7 @@ class MovieDetailViewModel(
         uiScope.launchSafe(::handleError) {
             liveData.value = State.ShowLoading
             val movie = withContext(Dispatchers.IO) {
-                movieRepository.getMovie(movieId)
+                movieDetailInteractor.getMovie(movieId)
             }
             movie?.let { liveData.postValue(State.Result(it)) }
             liveData.value = State.HideLoading
