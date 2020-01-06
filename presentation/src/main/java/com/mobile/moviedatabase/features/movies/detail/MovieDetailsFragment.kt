@@ -11,15 +11,20 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.ui.NavigationUI
 import com.mobile.data.NetworkConstants
+import com.mobile.domain.Movie
 
 import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseFragment
 import com.mobile.moviedatabase.core.di.GlideApp
 import com.mobile.moviedatabase.core.utils.AppConstants
+import com.mobile.moviedatabase.features.login.AuthViewModel
 import org.koin.android.ext.android.inject
+import javax.inject.Inject
 
 class MovieDetailsFragment : BaseFragment() {
 
@@ -29,7 +34,12 @@ class MovieDetailsFragment : BaseFragment() {
         }
     }
 
-    private val movieDetailViewModel: MovieDetailViewModel by inject()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(MovieDetailViewModel::class.java)
+    }
 
     private lateinit var progressBar: ProgressBar
     private lateinit var ivPoster: ImageView
@@ -64,9 +74,9 @@ class MovieDetailsFragment : BaseFragment() {
 
     override fun setData() {
         arguments?.getInt(AppConstants.MOVIE_ID)?.let { id ->
-            movieDetailViewModel.getMovieDetail(movieId = id)
+            viewModel.getMovieDetail(movieId = id)
         }
-        movieDetailViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
+        viewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
             when(result) {
                 is MovieDetailViewModel.State.ShowLoading -> {
                     progressBar.visibility = View.VISIBLE

@@ -10,8 +10,9 @@ import com.mobile.moviedatabase.core.extensions.launchSafe
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MovieListViewModel(
+class MovieListViewModel @Inject constructor(
     private val getMoviesInteractor: GetMoviesInteractor
 ) : BaseViewModel() {
 

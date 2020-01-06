@@ -4,8 +4,9 @@ import com.google.gson.JsonObject
 import com.mobile.data.network.MovieApi
 import com.mobile.data.storage.LocalPrefStorage
 import com.mobile.domain.repository.UserRepository
+import javax.inject.Inject
 
-class UserRepositoryImpl(
+class UserRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val localPrefStorage: LocalPrefStorage
 ) : UserRepository {

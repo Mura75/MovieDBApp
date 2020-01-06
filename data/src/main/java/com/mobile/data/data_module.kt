@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.mobile.data.mapper.MovieMapper
 import com.mobile.data.network.MovieApi
 import com.mobile.data.repository.MovieRepositoryImpl
 import com.mobile.data.repository.UserRepositoryImpl
@@ -40,7 +41,8 @@ val networkModule = module {
 }
 
 val repositoryModule = module {
-    single { MovieRepositoryImpl(movieApi = get()) as MovieRepository }
+    single { MovieMapper() }
+    single { MovieRepositoryImpl(movieApi = get(), movieMapper = get()) as MovieRepository }
     single { UserRepositoryImpl(movieApi = get(), localPrefStorage = get()) as UserRepository }
 }
 

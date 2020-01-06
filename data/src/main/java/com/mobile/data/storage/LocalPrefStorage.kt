@@ -3,8 +3,9 @@ package com.mobile.data.storage
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import javax.inject.Inject
 
-class LocalPrefStorage constructor(context: Context) {
+class LocalPrefStorage @Inject constructor(context: Context) {
 
     companion object {
         const val SESSION_ID = "session_id"

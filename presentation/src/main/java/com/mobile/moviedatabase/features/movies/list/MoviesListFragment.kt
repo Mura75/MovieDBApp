@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +21,9 @@ import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseFragment
 import com.mobile.moviedatabase.core.utils.AppConstants
 import com.mobile.moviedatabase.core.utils.PaginationListener
+import com.mobile.moviedatabase.features.login.AuthViewModel
 import org.koin.android.ext.android.inject
+import javax.inject.Inject
 
 
 class MoviesListFragment : BaseFragment() {
@@ -30,7 +34,12 @@ class MoviesListFragment : BaseFragment() {
         }
     }
 
-    private val viewModel: MovieListViewModel by inject()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(MovieListViewModel::class.java)
+    }
 
     private lateinit var navController: NavController
     private lateinit var srlMovies: SwipeRefreshLayout

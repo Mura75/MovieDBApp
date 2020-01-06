@@ -1,11 +1,14 @@
 package com.mobile.data.repository
 
+import com.mobile.data.mapper.MovieMapper
 import com.mobile.data.network.MovieApi
 import com.mobile.domain.Movie
 import com.mobile.domain.repository.MovieRepository
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
-    private val movieApi: MovieApi
+class MovieRepositoryImpl @Inject constructor(
+    private val movieApi: MovieApi,
+    private val movieMapper: MovieMapper
 ): MovieRepository {
 
     override suspend fun getMovies(page: Int): Pair<Int, List<Movie>> {
@@ -13,7 +16,7 @@ class MovieRepositoryImpl(
             .await()
             .body()
         val pages = response?.totalPages ?: 0
-        val list = response?.results ?: emptyList()
+        val list = response?.results?.map { movieMapper.to(it) } ?: emptyList()
         return Pair(pages, list)
     }
 

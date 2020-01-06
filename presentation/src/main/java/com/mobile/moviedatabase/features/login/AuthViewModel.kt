@@ -8,8 +8,9 @@ import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.extensions.launchSafe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class AuthViewModel constructor(
+class AuthViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
     private val userExistInteractor: UserExistInteractor
 ) : BaseViewModel() {

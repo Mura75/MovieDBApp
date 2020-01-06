@@ -9,8 +9,9 @@ import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.extensions.launchSafe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MovieDetailViewModel(
+class MovieDetailViewModel @Inject constructor(
     private val movieDetailInteractor: MovieDetailInteractor
 ): BaseViewModel() {
 
