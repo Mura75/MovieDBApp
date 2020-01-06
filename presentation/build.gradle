@@ -117,5 +117,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.2.0-rc04'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.0-rc04'
 
+    //dagger
+    implementation 'com.google.dagger:dagger-android-support:2.25.2'
+
 //    implementation "androidx.preference:preference-ktx:1.1.0"
 }
