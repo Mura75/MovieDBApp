@@ -1,2 +1,2 @@
-include ':presentation', ':domain', ':data'
+include ':presentation', ':domain', ':data', ':sources:core_api', ':sources:core_impl', ':sources:core'
 rootProject.name='MovieDBApp'
