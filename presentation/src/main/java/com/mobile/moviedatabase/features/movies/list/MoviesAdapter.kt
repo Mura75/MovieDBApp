@@ -29,10 +29,11 @@ class MoviesAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return when(viewType) {
             VIEW_TYPE_NORMAL -> MovieViewHolder(
-                inflater.inflate(R.layout.row_item_movie, parent, false)
+                view = inflater.inflate(R.layout.row_item_movie, parent, false),
+                itemClickListener = itemClickListener
             )
             VIEW_TYPE_LOADING -> ProgressViewHolder(
-                inflater.inflate(R.layout.row_item_loading, parent, false)
+                view = inflater.inflate(R.layout.row_item_loading, parent, false)
             )
             else -> throw Throwable("invalid view")
         }
@@ -96,7 +97,10 @@ class MoviesAdapter(
         notifyDataSetChanged()
     }
 
-    inner class MovieViewHolder(private val view: View): BaseViewHolder(view) {
+    inner class MovieViewHolder(
+        private val view: View,
+        private val itemClickListener: ItemClickListener? = null
+    ): BaseViewHolder(view) {
 
         private val tvTitle: TextView
         private val tvRating: TextView
