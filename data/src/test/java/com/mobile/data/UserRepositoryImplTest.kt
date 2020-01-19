@@ -75,7 +75,11 @@ class UserRepositoryImplTest {
             val deferred = CompletableDeferred(Response.success(JsonObject()))
             `when`(movieApi.createSession(JsonObject()))
                 .thenReturn(deferred)
+
+            val sessionToken = userRepository.createSession("")
+            assertEquals(sessionToken, "")
         }
+
     }
 
     @Test
