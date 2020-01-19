@@ -24,7 +24,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class NetworkModule(private val context: Context) {
+open class NetworkModule(private val context: Context) {
 
     companion object {
         private const val CONNECTION_INTERCEPTOR = "connection_interceptor"
@@ -40,7 +40,7 @@ class NetworkModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+    open fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl(NetworkConstants.MOVIE_API_URL)
             .client(okHttpClient)

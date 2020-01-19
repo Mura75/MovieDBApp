@@ -11,6 +11,7 @@ import com.mobile.data.network.MovieApi
 import com.mobile.data.repository.MovieRepositoryImpl
 import com.mobile.data.repository.UserRepositoryImpl
 import com.mobile.data.storage.LocalPrefStorage
+import com.mobile.data.storage.LocalPrefStorageImpl
 import com.mobile.domain.repository.MovieRepository
 import com.mobile.domain.repository.UserRepository
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
@@ -37,7 +38,7 @@ val networkModule = module {
         )
     }
     single { createApiService(okHttpClient = get(), gson = get()) }
-    single { LocalPrefStorage(context = get()) }
+    single { LocalPrefStorageImpl(context = get()) as LocalPrefStorage }
 }
 
 val repositoryModule = module {

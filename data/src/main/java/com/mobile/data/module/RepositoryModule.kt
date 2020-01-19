@@ -1,11 +1,10 @@
 package com.mobile.data.module
 
-import android.content.Context
 import com.mobile.data.mapper.MovieMapper
 import com.mobile.data.network.MovieApi
 import com.mobile.data.repository.MovieRepositoryImpl
 import com.mobile.data.repository.UserRepositoryImpl
-import com.mobile.data.storage.LocalPrefStorage
+import com.mobile.data.storage.LocalPrefStorageImpl
 import com.mobile.domain.repository.MovieRepository
 import com.mobile.domain.repository.UserRepository
 import dagger.Module
@@ -26,6 +25,6 @@ class RepositoryModule {
     @Provides
     fun provideUserRepository(
         movieApi: MovieApi,
-        localPrefStorage: LocalPrefStorage
+        localPrefStorage: LocalPrefStorageImpl
     ): UserRepository = UserRepositoryImpl(movieApi = movieApi, localPrefStorage = localPrefStorage)
 }
