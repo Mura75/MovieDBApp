@@ -5,24 +5,16 @@ import com.mobile.data.network.MovieApi
 import com.mobile.data.repository.UserRepositoryImpl
 import com.mobile.data.storage.LocalPrefStorage
 import com.mobile.data.storage.LocalPrefStorageImpl
-import com.mobile.domain.repository.UserRepository
-import com.nhaarman.mockitokotlin2.doReturn
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnit
-import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.junit.MockitoRule
 import retrofit2.Response
 
@@ -39,53 +31,62 @@ class UserRepositoryImplTest {
 
     lateinit var userRepository: UserRepositoryImpl
 
+    private val deferred = CompletableDeferred(Response.success(JsonObject()))
+
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this)
         userRepository = UserRepositoryImpl(movieApi, localPrefStorage)
     }
 
     @Test
-    fun login() {
+    fun `user login`() {
         runBlocking {
-            val deferred = CompletableDeferred(Response.success(JsonObject()))
-            `when`(movieApi.login(JsonObject()))
-                .thenReturn(deferred)
+            `when`(movieApi.login(
+                body = JsonObject().apply {
+                    addProperty("username", "qwerty@gmail.com")
+                    addProperty("password", "123456")
+                    addProperty("request_token", "request_token")
+                })
+            ).thenReturn(deferred)
 
-            val login = userRepository.login("qwerty@gmail.com", "123456")
-            assertEquals(login, true)
+            val login = userRepository.login(
+                requestToken = "request_token",
+                username = "qwerty@gmail.com",
+                password = "123456"
+            )
+            assertEquals(login, false)
         }
     }
 
     @Test
-    fun createRequestToken() {
+    fun `create user request token`() {
         runBlocking {
-            val deferred = CompletableDeferred(Response.success(JsonObject()))
             `when`(movieApi.createRequestToken())
                 .thenReturn(deferred)
-
             val token = userRepository.createRequestToken()
             assertEquals(token, "")
         }
     }
 
     @Test
-    fun createSession() {
+    fun `create user session id`() {
         runBlocking {
-            val deferred = CompletableDeferred(Response.success(JsonObject()))
-            `when`(movieApi.createSession(JsonObject()))
+            val body = JsonObject().apply {
+                addProperty("request_token", "token")
+            }
+            `when`(movieApi.createSession(body))
                 .thenReturn(deferred)
-
-            val sessionToken = userRepository.createSession("")
-            assertEquals(sessionToken, "")
         }
-
     }
 
     @Test
-    fun isUserExist() {
-
+    fun `check is user exist`() {
+        `when`(localPrefStorage.getString("request_token"))
+            .thenReturn("request_token")
+        `when`(localPrefStorage.getString("session_id"))
+            .thenReturn("session_id")
+        val userExist = userRepository.isUserExist()
+        assertEquals(userExist, true)
     }
 }
-
-fun <T> T.toDeferred() = GlobalScope.async { this@toDeferred }

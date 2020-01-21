@@ -17,7 +17,14 @@ import org.koin.dsl.module
 
 
 val viewModelModule = module {
-    viewModel { AuthViewModel(authInteractor = get(), userExistInteractor = get()) }
+    viewModel {
+        AuthViewModel(
+            authInteractor = get(),
+            userExistInteractor = get(),
+            requestTokenInteractor = get(),
+            createSessionInteractor = get()
+        )
+    }
     viewModel { MovieListViewModel(getMoviesInteractor = get()) }
     viewModel { MovieDetailViewModel(movieDetailInteractor = get()) }
     viewModel { FavoriteMoviesViewModel(moviesRepository = get()) }

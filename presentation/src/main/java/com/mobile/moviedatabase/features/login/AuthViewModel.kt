@@ -2,6 +2,8 @@ package com.mobile.moviedatabase.features.login
 
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.interactor.AuthInteractor
+import com.mobile.domain.interactor.CreateSessionInteractor
+import com.mobile.domain.interactor.RequestTokenInteractor
 import com.mobile.domain.interactor.UserExistInteractor
 import com.mobile.domain.repository.UserRepository
 import com.mobile.moviedatabase.core.base.BaseViewModel
@@ -12,7 +14,9 @@ import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
     private val authInteractor: AuthInteractor,
-    private val userExistInteractor: UserExistInteractor
+    private val userExistInteractor: UserExistInteractor,
+    private val requestTokenInteractor: RequestTokenInteractor,
+    private val createSessionInteractor: CreateSessionInteractor
 ) : BaseViewModel() {
 
     val liveData = MutableLiveData<State>()
@@ -23,7 +27,9 @@ class AuthViewModel @Inject constructor(
         liveData.value = State.ShowLoading
         uiScope.launchSafe(::handleError) {
             val result = withContext(Dispatchers.IO) {
-                authInteractor.login(username, password)
+                val requestToken = requestTokenInteractor.createRequestToken()
+                createSessionInteractor.createSession(requestToken)
+                authInteractor.login(requestToken, username, password)
             }
             liveData.value = State.ShowLoading
             if (result) {

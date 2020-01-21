@@ -5,8 +5,6 @@ import com.mobile.data.network.MovieApi
 import com.mobile.data.storage.LocalPrefStorage
 import com.mobile.data.storage.LocalPrefStorageImpl
 import com.mobile.domain.repository.UserRepository
-import kotlinx.coroutines.Deferred
-import retrofit2.Response
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -14,18 +12,17 @@ class UserRepositoryImpl @Inject constructor(
     private val localPrefStorage: LocalPrefStorage
 ) : UserRepository {
 
-    override suspend fun login(username: String, password: String): Boolean {
-        var requestToken =  createRequestToken()
+    override suspend fun login(requestToken: String, username: String, password: String): Boolean {
         val body = JsonObject().apply {
             addProperty("username", username)
             addProperty("password", password)
             addProperty("request_token", requestToken)
         }
         val loginResponse = movieApi.login(body).await()
-        requestToken = loginResponse.body()?.getAsJsonPrimitive("request_token")?.asString ?: ""
-        localPrefStorage.saveData(LocalPrefStorageImpl.REQUEST_TOKEN, requestToken)
-        val sessionId = createSession(requestToken)
-        localPrefStorage.saveData(LocalPrefStorageImpl.SESSION_ID, sessionId)
+        val newRequestToken = loginResponse.body()
+            ?.getAsJsonPrimitive("request_token")
+            ?.asString ?: ""
+        localPrefStorage.saveData(LocalPrefStorageImpl.REQUEST_TOKEN, newRequestToken)
         return loginResponse.body()?.getAsJsonPrimitive("success")?.asBoolean ?: false
     }
 
@@ -41,21 +38,15 @@ class UserRepositoryImpl @Inject constructor(
             ?.asString ?: ""
     }
 
-    override suspend fun createSession(requestToken: String): String {
+    override suspend fun createSession(requestToken: String) {
         val body = JsonObject().apply {
             addProperty("request_token", requestToken)
         }
-        return movieApi.createSession(body)
+        val sessionId = movieApi.createSession(body)
             .await()
             .body()
             ?.getAsJsonPrimitive("session_id")
             ?.asString ?: ""
-    }
-
-    suspend fun createSession2(requestToken: String): Deferred<Response<JsonObject>> {
-        val body = JsonObject().apply {
-            addProperty("request_token", requestToken)
-        }
-        return movieApi.createSession(body)
+        localPrefStorage.saveData(LocalPrefStorageImpl.SESSION_ID, sessionId)
     }
 }
