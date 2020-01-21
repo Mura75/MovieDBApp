@@ -1,10 +1,8 @@
-package com.mobile.data
+package com.mobile.data.repository
 
 import com.google.gson.JsonObject
 import com.mobile.data.network.MovieApi
-import com.mobile.data.repository.UserRepositoryImpl
 import com.mobile.data.storage.LocalPrefStorage
-import com.mobile.data.storage.LocalPrefStorageImpl
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
