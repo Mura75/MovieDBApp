@@ -60,13 +60,13 @@ android {
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug_signed {
-            minifyEnabled true
-            shrinkResources true
-            zipAlignEnabled true
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+//        debug_signed {
+//            minifyEnabled true
+//            shrinkResources true
+//            zipAlignEnabled true
+//            signingConfig signingConfigs.debug
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
         debug {
             debuggable true
         }
