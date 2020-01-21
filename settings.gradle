@@ -1,2 +1,2 @@
-include ':app'
+include ':presentation', ':domain', ':data'
 rootProject.name='MovieDBApp'
