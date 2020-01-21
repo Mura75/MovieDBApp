@@ -11,8 +11,8 @@ import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.network.MovieApi
 import com.mobile.moviedatabase.features.movies.list.MovieListViewModel
-import com.mobile.moviedatabase.features.movies.data.MovieRepository
-import com.mobile.moviedatabase.features.movies.data.MovieRepositoryImpl
+import com.mobile.moviedatabase.data.repository.MovieRepository
+import com.mobile.moviedatabase.data.repository.MovieRepositoryImpl
 import com.mobile.moviedatabase.core.utils.AppConstants
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -25,7 +25,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.annotation.GlideModule
+import com.mobile.moviedatabase.data.repository.UserRepository
+import com.mobile.moviedatabase.data.repository.UserRepositoryImpl
+import com.mobile.moviedatabase.data.storage.LocalPrefStorage
+import com.mobile.moviedatabase.features.login.AuthViewModel
 import com.mobile.moviedatabase.features.movies.detail.MovieDetailViewModel
+import com.mobile.moviedatabase.features.movies.favorite.FavoriteMoviesViewModel
 import okhttp3.Response
 
 
@@ -42,15 +47,19 @@ val networkModule = module {
         )
     }
     single { createApiService(okHttpClient = get(), gson = get()) }
+    single { LocalPrefStorage(context = get()) }
 }
 
 val repositoryModule = module {
     single { MovieRepositoryImpl(movieApi = get()) as MovieRepository }
+    single { UserRepositoryImpl(movieApi = get(), localPrefStorage = get()) as UserRepository }
 }
 
 val viewModelModule = module {
+    viewModel { AuthViewModel(userRepository = get()) }
     viewModel { MovieListViewModel(movieRepository = get()) }
     viewModel { MovieDetailViewModel(movieRepository = get()) }
+    viewModel { FavoriteMoviesViewModel(moviesRepository = get()) }
     //viewModel { LoginViewModel(api = get()) }
 }
 
