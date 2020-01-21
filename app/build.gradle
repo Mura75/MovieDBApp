@@ -15,50 +15,13 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        debug {
-            try {
-                def propsFile = rootProject.file('local.properties')
-                def props = new Properties()
-
-                if (propsFile.canRead()) {
-                    props.load(new FileInputStream(propsFile))
-                    storePassword props['KEYSTORE_PASSWORD']
-                    keyAlias props['KEY_ALIAS']
-                    keyPassword props['KEY_PASSWORD']
-                    storeFile file(props['KEY_STORE'])
-                }
-            }
-            catch (ex) {
-                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
-            }
-        }
-        release {
-            try {
-                def propsFile = rootProject.file('keystore.properties')
-                def props = new Properties()
-
-                if (propsFile.canRead()) {
-                    props.load(new FileInputStream(propsFile))
-                    storePassword props['KEYSTORE_PASSWORD']
-                    keyAlias props['KEY_ALIAS']
-                    keyPassword props['KEY_PASSWORD']
-                    storeFile file(props['KEY_STORE'])
-                }
-            }
-            catch (ex) {
-                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
-            }
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             zipAlignEnabled true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 //        debug_signed {
 //            minifyEnabled true
