@@ -1,5 +1,6 @@
 package com.mobile.moviedatabase.features.login
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.interactor.AuthInteractor
 import com.mobile.domain.interactor.CreateSessionInteractor
@@ -9,6 +10,7 @@ import com.mobile.domain.repository.UserRepository
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.extensions.launchSafe
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,21 +27,25 @@ class AuthViewModel @Inject constructor(
 
     fun login(username: String, password: String) {
         liveData.value = State.ShowLoading
-        uiScope.launchSafe(::handleError) {
-            val result = withContext(Dispatchers.IO) {
-                val requestToken = requestTokenInteractor.createRequestToken()
-                createSessionInteractor.createSession(requestToken)
-                authInteractor.login(requestToken, username, password)
-            }
-            liveData.value = State.ShowLoading
-            if (result) {
-                liveData.value = State.Login
+        uiScope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    val requestToken = requestTokenInteractor.createRequestToken()
+                    createSessionInteractor.createSession(requestToken)
+                    authInteractor.login(requestToken, username, password)
+                }
+                liveData.value = State.HideLoading
+                if (result) {
+                    liveData.value = State.Login
+                }
+            } catch (e: Throwable) {
+                handleError(e)
             }
         }
     }
 
     override fun handleError(e: Throwable) {
-        e.printStackTrace()
+        Log.e("error", e.toString())
     }
 
     sealed class State {
