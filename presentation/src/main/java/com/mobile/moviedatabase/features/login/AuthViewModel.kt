@@ -36,9 +36,11 @@ class AuthViewModel @Inject constructor(
                 }
                 liveData.value = State.HideLoading
                 if (result) {
-                    liveData.value = State.Login
+                    //liveData.value = State.Login
                 }
+                liveData.value = State.Login
             } catch (e: Throwable) {
+                liveData.value = State.HideLoading
                 handleError(e)
             }
         }
