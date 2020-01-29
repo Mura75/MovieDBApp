@@ -1,6 +1,5 @@
 package com.mobile.moviedatabase.features.login
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -20,12 +19,17 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
-import org.mockito.verification.VerificationMode
+import org.mockito.junit.MockitoJUnit
+import org.mockito.junit.MockitoJUnitRunner
+
 
 @ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class AuthViewModelTest {
 
     @get:Rule
@@ -54,35 +58,43 @@ class AuthViewModelTest {
 
     lateinit var lifecycle: Lifecycle
 
-    private val authViewModel: AuthViewModel by lazy {
-        AuthViewModel(
-            authInteractor = authInteractor,
-            userExistInteractor = userExistInteractor,
-            requestTokenInteractor = requestTokenInteractor,
-            createSessionInteractor = createSessionInteractor
-        )
-    }
+    lateinit var authViewModel: AuthViewModel
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         Dispatchers.setMain(Dispatchers.Unconfined)
         lifecycle = LifecycleRegistry(lifecycleOwner)
+        authViewModel = AuthViewModel(
+            authInteractor = authInteractor,
+            userExistInteractor = userExistInteractor,
+            requestTokenInteractor = requestTokenInteractor,
+            createSessionInteractor = createSessionInteractor
+        )
         authViewModel.liveData.observeForever(observer)
     }
 
     @Test
-    fun notNull() {
+    fun `check is liveData exist`() {
         assertNotNull(authViewModel.liveData)
         assertTrue(authViewModel.liveData.hasObservers())
     }
 
 
     @Test
-    fun `check is user exist`() {
+    fun `user exist`() {
         `when`(userExistInteractor.isUserExist())
             .thenReturn(true)
         assertEquals(userExistInteractor.isUserExist(), true)
+        assertEquals(authViewModel.isUserExist(), true)
+    }
+
+    @Test
+    fun `user doesn't exist`() {
+        `when`(userExistInteractor.isUserExist())
+            .thenReturn(false)
+        assertEquals(userExistInteractor.isUserExist(), false)
+        assertEquals(authViewModel.isUserExist(), false)
     }
 
     @Test
@@ -92,13 +104,46 @@ class AuthViewModelTest {
                 requestTokenInteractor.createRequestToken()
             ).thenReturn("")
             `when`(
-                authInteractor.login(requestToken = "", username = "qwerty@gmail.com", password = "123456")
+                authInteractor.login(
+                    requestToken = "",
+                    username = "qwerty@gmail.com",
+                    password = "123456"
+                )
             ).thenReturn(true)
             authViewModel.login(username = "qwerty@gmail.com", password = "123456")
             verify(observer).onChanged(AuthViewModel.State.ShowLoading)
-            verify(authInteractor).login(requestToken = "", username = "qwerty@gmail.com", password = "123456")
-            verify(observer).onChanged(AuthViewModel.State.HideLoading)
+            verify(authInteractor).login(
+                requestToken = "",
+                username = "qwerty@gmail.com",
+                password = "123456"
+            )
             verify(observer).onChanged(AuthViewModel.State.Login)
+            verify(observer).onChanged(AuthViewModel.State.HideLoading)
+        }
+    }
+
+    @Test
+    fun `login failure`() {
+        runBlocking {
+            `when`(
+                requestTokenInteractor.createRequestToken()
+            ).thenReturn("")
+            `when`(
+                authInteractor.login(
+                    requestToken = "",
+                    username = "qwerty@gmail.com",
+                    password = "12345"
+                )
+            ).thenReturn(false)
+            authViewModel.login(username = "qwerty@gmail.com", password = "12345")
+            verify(observer).onChanged(AuthViewModel.State.ShowLoading)
+            verify(authInteractor).login(
+                requestToken = "",
+                username = "qwerty@gmail.com",
+                password = "12345"
+            )
+            verify(observer).onChanged(AuthViewModel.State.Error("incorrect login or password"))
+            verify(observer).onChanged(AuthViewModel.State.HideLoading)
         }
     }
 
@@ -106,5 +151,4 @@ class AuthViewModelTest {
     fun tearDown() {
 
     }
-
 }

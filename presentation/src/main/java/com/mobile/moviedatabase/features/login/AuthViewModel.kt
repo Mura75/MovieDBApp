@@ -27,27 +27,25 @@ class AuthViewModel @Inject constructor(
 
     fun login(username: String, password: String) {
         liveData.value = State.ShowLoading
-        uiScope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    val requestToken = requestTokenInteractor.createRequestToken()
-                    createSessionInteractor.createSession(requestToken)
-                    authInteractor.login(requestToken, username, password)
-                }
-                liveData.value = State.HideLoading
-                if (result) {
-                    //liveData.value = State.Login
-                }
-                liveData.value = State.Login
-            } catch (e: Throwable) {
-                liveData.value = State.HideLoading
-                handleError(e)
+        uiScope.launchSafe(::handleError) {
+            val result = withContext(Dispatchers.IO) {
+                val requestToken = requestTokenInteractor.createRequestToken()
+                createSessionInteractor.createSession(requestToken)
+                authInteractor.login(requestToken, username, password)
             }
+            if (result) {
+                liveData.value = State.Login
+            } else {
+                liveData.value = State.Error("incorrect login or password")
+            }
+            liveData.value = State.HideLoading
         }
     }
 
     override fun handleError(e: Throwable) {
         Log.e("error", e.toString())
+        liveData.value = State.HideLoading
+        liveData.value = State.Error(e.localizedMessage)
     }
 
     sealed class State {
