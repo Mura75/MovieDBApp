@@ -22,7 +22,7 @@ class MovieDetailInteractorTest {
     @Test
     fun getMovie() {
         runBlocking {
-            val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Load of the ring")
+            val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
             assertEquals(movieDetailInteractor.getMovie(1), movie)
         }
     }
