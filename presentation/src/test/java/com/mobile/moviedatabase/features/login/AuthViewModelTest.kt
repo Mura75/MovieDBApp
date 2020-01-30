@@ -19,17 +19,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnit
-import org.mockito.junit.MockitoJUnitRunner
 
 
 @ExperimentalCoroutinesApi
-@RunWith(MockitoJUnitRunner::class)
 class AuthViewModelTest {
 
     @get:Rule
@@ -98,31 +93,6 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun `login success`() {
-        runBlocking {
-            `when`(
-                requestTokenInteractor.createRequestToken()
-            ).thenReturn("")
-            `when`(
-                authInteractor.login(
-                    requestToken = "",
-                    username = "qwerty@gmail.com",
-                    password = "123456"
-                )
-            ).thenReturn(true)
-            authViewModel.login(username = "qwerty@gmail.com", password = "123456")
-            verify(observer).onChanged(AuthViewModel.State.ShowLoading)
-            verify(authInteractor).login(
-                requestToken = "",
-                username = "qwerty@gmail.com",
-                password = "123456"
-            )
-            verify(observer).onChanged(AuthViewModel.State.Login)
-            verify(observer).onChanged(AuthViewModel.State.HideLoading)
-        }
-    }
-
-    @Test
     fun `login failure`() {
         runBlocking {
             `when`(
@@ -146,6 +116,33 @@ class AuthViewModelTest {
             verify(observer).onChanged(AuthViewModel.State.HideLoading)
         }
     }
+
+    @Test
+    fun `login success`() {
+        runBlocking {
+            `when`(
+                requestTokenInteractor.createRequestToken()
+            ).thenReturn("")
+            reset(authInteractor)
+            `when`(
+                authInteractor.login(
+                    requestToken = "",
+                    username = "qwerty@gmail.com",
+                    password = "123456"
+                )
+            ).thenReturn(true)
+            authViewModel.login(username = "qwerty@gmail.com", password = "123456")
+            verify(observer).onChanged(AuthViewModel.State.ShowLoading)
+            inOrder(authInteractor).verify(authInteractor).login(
+                requestToken = "",
+                username = "qwerty@gmail.com",
+                password = "123456"
+            )
+            verify(observer).onChanged(AuthViewModel.State.Login)
+            verify(observer).onChanged(AuthViewModel.State.HideLoading)
+        }
+    }
+
 
     @After
     fun tearDown() {
