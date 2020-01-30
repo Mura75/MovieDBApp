@@ -34,8 +34,7 @@ class MovieListViewModel @Inject constructor(
     fun loadMovies(page: Int = 1) {
         uiScope.launchSafe(::handleError) {
             if (page == 1) {
-                liveData.value =
-                    State.ShowLoading
+                liveData.value = State.ShowLoading
             }
             val result = withContext(Dispatchers.IO) {
                 getMoviesInteractor.getMovies(page)
@@ -48,8 +47,7 @@ class MovieListViewModel @Inject constructor(
                     list = result.second
                 )
             )
-            liveData.value =
-                State.HideLoading
+            liveData.value = State.HideLoading
         }
     }
 

@@ -10,7 +10,7 @@ import com.mobile.domain.interactor.CreateSessionInteractor
 import com.mobile.domain.interactor.RequestTokenInteractor
 import com.mobile.domain.interactor.UserExistInteractor
 import com.mobile.moviedatabase.CoroutinesTestRule
-import junit.framework.Assert.*
+import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -23,15 +23,14 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 
-
 @ExperimentalCoroutinesApi
 class AuthViewModelTest {
 
     @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+    val instantExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
-    var coroutinesTestRule = CoroutinesTestRule()
+    val coroutinesTestRule = CoroutinesTestRule()
 
     @Mock
     lateinit var observer: Observer<AuthViewModel.State>
