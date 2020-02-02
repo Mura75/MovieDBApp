@@ -21,8 +21,6 @@ import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseFragment
 import com.mobile.moviedatabase.core.utils.AppConstants
 import com.mobile.moviedatabase.core.utils.PaginationListener
-import com.mobile.moviedatabase.features.login.AuthViewModel
-import org.koin.android.ext.android.inject
 import javax.inject.Inject
 
 

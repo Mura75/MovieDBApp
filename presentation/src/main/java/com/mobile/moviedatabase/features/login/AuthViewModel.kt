@@ -6,11 +6,9 @@ import com.mobile.domain.interactor.AuthInteractor
 import com.mobile.domain.interactor.CreateSessionInteractor
 import com.mobile.domain.interactor.RequestTokenInteractor
 import com.mobile.domain.interactor.UserExistInteractor
-import com.mobile.domain.repository.UserRepository
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.extensions.launchSafe
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

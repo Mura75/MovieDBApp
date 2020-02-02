@@ -3,10 +3,9 @@ package com.mobile.domain.interactor
 import com.mobile.domain.Movie
 import com.mobile.domain.repository.MovieRepositoryImplTest
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Test
 
 class GetMoviesInteractorTest {
 

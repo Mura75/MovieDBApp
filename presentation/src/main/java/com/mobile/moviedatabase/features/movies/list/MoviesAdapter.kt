@@ -12,7 +12,6 @@ import com.mobile.domain.Movie
 import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.core.base.BaseViewHolder
 import com.mobile.moviedatabase.core.di.GlideApp
-import com.mobile.moviedatabase.core.utils.AppConstants
 
 class MoviesAdapter(
     private val itemClickListener: ItemClickListener? = null

@@ -3,7 +3,6 @@ package com.mobile.moviedatabase.features.movies.detail
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.Movie
 import com.mobile.domain.interactor.MovieDetailInteractor
-import com.mobile.domain.repository.MovieRepository
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.extensions.launchSafe

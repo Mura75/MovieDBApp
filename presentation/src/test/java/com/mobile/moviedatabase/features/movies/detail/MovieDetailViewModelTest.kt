@@ -11,13 +11,12 @@ import com.mobile.moviedatabase.CoroutinesTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
@@ -59,10 +58,22 @@ class MovieDetailViewModelTest {
         runBlocking {
             `when`(movieDetailInteractor.getMovie(1)).thenReturn(movie)
             movieDetailViewModel.getMovieDetail(1)
-            verify(observer).onChanged(MovieDetailViewModel.State.ShowLoading)
-            verify(movieDetailInteractor).getMovie(1)
-            verify(observer).onChanged(MovieDetailViewModel.State.Result(movie))
-            verify(observer).onChanged(MovieDetailViewModel.State.HideLoading)
+            inOrder(observer).verify(observer, times(1))
+                .onChanged(MovieDetailViewModel.State.ShowLoading)
+            Thread.sleep(1000)
+            inOrder(movieDetailInteractor).verify(movieDetailInteractor).getMovie(1)
+            inOrder(observer).verify(observer, times(1))
+                .onChanged(MovieDetailViewModel.State.Result(movie))
+            inOrder(observer).verify(observer, times(1))
+                .onChanged(MovieDetailViewModel.State.HideLoading)
         }
+    }
+
+    @After
+    fun tearDown() {
+        reset(observer)
+        reset(lifecycleOwner)
+        reset(movieDetailInteractor)
+        Dispatchers.resetMain()
     }
 }

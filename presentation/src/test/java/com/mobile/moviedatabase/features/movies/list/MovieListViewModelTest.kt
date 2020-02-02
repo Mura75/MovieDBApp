@@ -11,13 +11,12 @@ import com.mobile.moviedatabase.CoroutinesTestRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
@@ -44,10 +43,6 @@ class MovieListViewModelTest {
 
     lateinit var moviesListViewModel: MovieListViewModel
 
-    private val moviesList = listOf(
-        Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
-    )
-
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -59,36 +54,30 @@ class MovieListViewModelTest {
 
     @Test
     fun `load movies first page`() {
+        val moviesList = listOf(
+                Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        )
         val pair: Pair<Int, List<Movie>> = Pair(1, moviesList)
         runBlocking {
             `when`(getMoviesInteractor.getMovies(page = 1)).thenReturn(pair)
-
             moviesListViewModel.loadMovies(page = 1)
             verify(observer, times(2))
-                .onChanged(MovieListViewModel.State.ShowLoading)
+                    .onChanged(MovieListViewModel.State.ShowLoading)
             verify(getMoviesInteractor, times(2)).getMovies(1)
             verify(observer).onChanged(MovieListViewModel.State.Result(
-                totalPage = pair.first,
-                list = pair.second)
+                    totalPage = pair.first,
+                    list = pair.second)
             )
             verify(observer, times(2))
-                .onChanged(MovieListViewModel.State.HideLoading)
+                    .onChanged(MovieListViewModel.State.HideLoading)
         }
     }
 
-    @Test
-    fun `load movies second page`() {
-        val pair: Pair<Int, List<Movie>> = Pair(2, moviesList)
-        runBlocking {
-            `when`(getMoviesInteractor.getMovies(page = 2)).thenReturn(pair)
-            moviesListViewModel.loadMovies(page = 2)
-            verify(observer).onChanged(MovieListViewModel.State.ShowLoading)
-            verify(getMoviesInteractor).getMovies(1)
-            verify(observer).onChanged(MovieListViewModel.State.Result(
-                totalPage = pair.first,
-                list = pair.second)
-            )
-            verify(observer, times(2)).onChanged(MovieListViewModel.State.HideLoading)
-        }
+    @After
+    fun tearDown() {
+        reset(lifecycleOwner)
+        reset(getMoviesInteractor)
+        reset(observer)
+        Dispatchers.resetMain()
     }
 }

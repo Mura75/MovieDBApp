@@ -14,6 +14,7 @@ import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -112,7 +113,7 @@ class AuthViewModelTest {
                 password = "12345"
             )
             verify(observer).onChanged(AuthViewModel.State.Error("incorrect login or password"))
-            verify(observer).onChanged(AuthViewModel.State.HideLoading)
+            verify(observer, times(1)).onChanged(AuthViewModel.State.HideLoading)
         }
     }
 
@@ -145,6 +146,12 @@ class AuthViewModelTest {
 
     @After
     fun tearDown() {
-
+        reset(observer)
+        reset(lifecycleOwner)
+        reset(authInteractor)
+        reset(userExistInteractor)
+        reset(requestTokenInteractor)
+        reset(createSessionInteractor)
+        Dispatchers.resetMain()
     }
 }

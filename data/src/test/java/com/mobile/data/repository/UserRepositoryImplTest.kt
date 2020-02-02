@@ -5,12 +5,14 @@ import com.mobile.data.network.MovieApi
 import com.mobile.data.storage.LocalPrefStorage
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
-import org.junit.Assert.*
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.reset
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
@@ -29,12 +31,14 @@ class UserRepositoryImplTest {
 
     lateinit var userRepository: UserRepositoryImpl
 
-    private val deferred = CompletableDeferred(Response.success(JsonObject()))
+    private lateinit var deferred: CompletableDeferred<Response<JsonObject>>
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
+        deferred = CompletableDeferred(Response.success(JsonObject()))
         userRepository = UserRepositoryImpl(movieApi, localPrefStorage)
+
     }
 
     @Test
@@ -86,5 +90,11 @@ class UserRepositoryImplTest {
             .thenReturn("session_id")
         val userExist = userRepository.isUserExist()
         assertEquals(userExist, true)
+    }
+
+    @After
+    fun tearDown() {
+        reset(movieApi)
+        reset(localPrefStorage)
     }
 }

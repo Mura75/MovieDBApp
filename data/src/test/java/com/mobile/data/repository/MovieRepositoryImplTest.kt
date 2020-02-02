@@ -8,13 +8,11 @@ import com.mobile.domain.Movie
 import com.mobile.domain.repository.MovieRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
-import org.junit.Test
+import org.junit.*
 
-import org.junit.Before
-import org.junit.Rule
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.reset
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
@@ -31,6 +29,7 @@ class MovieRepositoryImplTest {
     lateinit var movieRepository: MovieRepository
 
     lateinit var movieMapper: MovieMapper
+
 
     @Before
     fun setUp() {
@@ -64,5 +63,10 @@ class MovieRepositoryImplTest {
         runBlocking {
             Assert.assertEquals(movieRepository.getMovie(1), movie)
         }
+    }
+
+    @After
+    fun tearDown() {
+        reset(movieApi)
     }
 }

@@ -2,18 +2,15 @@ package com.mobile.moviedatabase.features.login
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.mobile.moviedatabase.R
 import com.mobile.moviedatabase.features.MainActivity
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_auth.*
-import org.koin.android.ext.android.inject
 import javax.inject.Inject
 
 class AuthActivity : AppCompatActivity() {

@@ -4,10 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.mobile.domain.Movie
 import com.mobile.domain.interactor.GetMoviesInteractor
-import com.mobile.domain.repository.MovieRepository
+import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.extensions.launchSafe
-import com.mobile.moviedatabase.core.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

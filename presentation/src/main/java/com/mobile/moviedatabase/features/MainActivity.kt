@@ -1,15 +1,10 @@
 package com.mobile.moviedatabase.features
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import com.google.android.material.navigation.NavigationView
 import com.mobile.moviedatabase.R
-import com.mobile.moviedatabase.features.movies.list.MoviesListFragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector

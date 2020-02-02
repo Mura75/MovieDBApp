@@ -40,7 +40,7 @@ dependencies {
     implementation project(':domain')
 
     //koin
-    implementation 'org.koin:koin-android:2.0.1'
+    //implementation 'org.koin:koin-android:2.0.1'
 
     //okHttp
     implementation 'com.squareup.okhttp3:okhttp:4.3.1'
@@ -69,9 +69,19 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.3'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.27.0'
-    androidTestImplementation 'org.mockito:mockito-android:2.27.0'
     testImplementation 'androidx.test:core:1.2.0'
+    //testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+    androidTestImplementation ("org.mockito:mockito-core:2.27.0") {
+        exclude group: 'net.bytebuddy', module: 'byte-buddy'
+        exclude group: 'net.bytebuddy', module: 'byte-buddy-android'
+        exclude group: 'net.bytebuddy', module: 'byte-buddy-agent'
+    }
+    //androidTestImplementation 'org.mockito:mockito-android:2.27.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+
+    androidTestImplementation 'net.bytebuddy:byte-buddy:1.9.10'
+    androidTestImplementation 'net.bytebuddy:byte-buddy-android:1.9.10'
+    androidTestImplementation 'net.bytebuddy:byte-buddy-agent:1.9.10'
 }

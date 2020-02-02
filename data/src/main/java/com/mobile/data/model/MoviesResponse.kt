@@ -1,7 +1,6 @@
 package com.mobile.data.model
 
 import com.google.gson.annotations.SerializedName
-import com.mobile.domain.Movie
 
 data class MoviesResponse(
     @SerializedName("page")

@@ -11,14 +11,9 @@ import com.mobile.data.module.RepositoryModule
 import com.mobile.data.module.StorageModule
 import com.mobile.moviedatabase.core.base.BaseFragment
 import com.mobile.moviedatabase.core.di.DaggerMainComponent
-import com.mobile.moviedatabase.core.di.appModules
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
 import javax.inject.Inject
 
 class MovieDBApp : Application(), HasAndroidInjector, Application.ActivityLifecycleCallbacks {
@@ -39,11 +34,6 @@ class MovieDBApp : Application(), HasAndroidInjector, Application.ActivityLifecy
         super.onCreate()
         appComponent.inject(this)
         registerActivityLifecycleCallbacks(this)
-
-//        startKoin {
-//            androidContext(this@MovieDBApp)
-//            modules(appModules)
-//        }
     }
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjectorAny
