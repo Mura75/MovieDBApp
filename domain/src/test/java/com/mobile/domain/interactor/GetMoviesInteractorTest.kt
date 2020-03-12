@@ -20,10 +20,12 @@ class GetMoviesInteractorTest {
 
     @Test
     fun getMovies() {
-        runBlocking {
-            val assertList = listOf(Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring"))
-            val movies = getMoviesInteractor.getMovies(1)
-            assertEquals(movies, Pair(1, assertList))
-        }
+        val assertList = listOf(
+            Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        )
+        getMoviesInteractor.getMovies(1)
+            .test()
+            .assertResult(Pair(1, assertList))
+            .assertNoErrors()
     }
 }

@@ -20,9 +20,7 @@ class UserExistInteractorTest {
 
     @Test
     fun `test user exist`() {
-        runBlocking {
-            val isExist = userExistInteractor.isUserExist()
-            assertEquals(isExist, true)
-        }
+        val isExist = userExistInteractor.isUserExist()
+        assertEquals(isExist, true)
     }
 }
