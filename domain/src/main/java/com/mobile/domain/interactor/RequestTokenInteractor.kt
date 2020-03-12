@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class RequestTokenInteractor @Inject constructor(private val userRepository: UserRepository) {
 
-    suspend fun createRequestToken() = userRepository.createRequestToken()
+    fun createRequestToken() = userRepository.createRequestToken()
 }

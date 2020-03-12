@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class GetMoviesInteractor @Inject constructor(private val movieRepository: MovieRepository) {
 
-    suspend fun getMovies(page: Int) = movieRepository.getMovies(page)
+    fun getMovies(page: Int) = movieRepository.getMovies(page)
 }

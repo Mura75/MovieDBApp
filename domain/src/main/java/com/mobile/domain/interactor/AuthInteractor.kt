@@ -1,11 +1,12 @@
 package com.mobile.domain.interactor
 
 import com.mobile.domain.repository.UserRepository
+import io.reactivex.Single
 import javax.inject.Inject
 
 class AuthInteractor @Inject constructor(private val userRepository: UserRepository) {
 
-    suspend fun login(requestToken: String, username: String?, password:String?): Boolean {
+    fun login(requestToken: String, username: String?, password:String?): Single<Pair<String, Boolean>> {
         if (username.isNullOrEmpty()) {
             throw Exception("empty username")
         }

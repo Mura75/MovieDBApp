@@ -4,6 +4,7 @@ import com.mobile.data.mapper.MovieMapper
 import com.mobile.data.network.MovieApi
 import com.mobile.domain.Movie
 import com.mobile.domain.repository.MovieRepository
+import io.reactivex.Single
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -11,17 +12,28 @@ class MovieRepositoryImpl @Inject constructor(
     private val movieMapper: MovieMapper
 ): MovieRepository {
 
-    override suspend fun getMovies(page: Int): Pair<Int, List<Movie>> {
-        val response = movieApi.getPopularMovies(page)
-            .await()
-            .body()
-        val pages = response?.totalPages ?: 0
-        val list = response?.results?.map { movieMapper.to(it) } ?: emptyList()
-        return Pair(pages, list)
+    override fun getMovies(page: Int): Single<Pair<Int, List<Movie>>> {
+        return movieApi.getPopularMovies(page)
+            .flatMap { response ->
+                if (response.isSuccessful) {
+                    val pages = response.body()?.totalPages ?: 0
+                    val list = response.body()?.results?.map { movieMapper.to(it) } ?: emptyList()
+                    val pair = Pair(pages, list)
+                    Single.just(pair)
+                } else {
+                    Single.error(Throwable(""))
+                }
+            }
     }
 
-    override suspend fun getMovie(movieId: Int): Movie? =
-        movieApi.getMovie(movieId)
-            .await()
-            .body()
+    override fun getMovie(movieId: Int): Single<Movie> {
+        return movieApi.getMovie(movieId)
+            .flatMap { response ->
+                if (response.isSuccessful) {
+                    Single.just(response.body())
+                } else {
+                    Single.error(Throwable(""))
+                }
+            }
+    }
 }

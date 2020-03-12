@@ -1,8 +1,12 @@
 package com.mobile.domain.repository
 
+import io.reactivex.Completable
+import io.reactivex.Single
+
 interface UserRepository {
-    suspend fun login(requestToken: String, username: String, password: String): Boolean
+    fun login(requestToken: String, username: String, password: String): Single<Pair<String, Boolean>>
     fun isUserExist(): Boolean
-    suspend fun createRequestToken(): String
-    suspend fun createSession(requestToken: String)
+    fun createRequestToken(): Single<String>
+    fun createSession(requestToken: String): Single<String>
+    fun saveToken(token: String)
 }

@@ -1,8 +1,9 @@
 package com.mobile.domain.repository
 
 import com.mobile.domain.Movie
+import io.reactivex.Single
 
 interface MovieRepository {
-    suspend fun getMovies(page: Int): Pair<Int, List<Movie>>
-    suspend fun getMovie(movieId: Int): Movie?
+    fun getMovies(page: Int): Single<Pair<Int, List<Movie>>>
+    fun getMovie(movieId: Int): Single<Movie>
 }

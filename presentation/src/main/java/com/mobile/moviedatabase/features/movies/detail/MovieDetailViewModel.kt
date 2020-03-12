@@ -6,6 +6,9 @@ import com.mobile.domain.interactor.MovieDetailInteractor
 import com.mobile.moviedatabase.core.base.BaseViewModel
 import com.mobile.moviedatabase.core.exceptions.NoConnectionException
 import com.mobile.moviedatabase.core.extensions.launchSafe
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,26 +20,18 @@ class MovieDetailViewModel @Inject constructor(
     val liveData = MutableLiveData<State>()
 
     fun getMovieDetail(movieId: Int) {
-        uiScope.launchSafe(::handleError) {
-            liveData.value = State.ShowLoading
-            val movie = withContext(Dispatchers.IO) {
-                movieDetailInteractor.getMovie(movieId)
-            }
-            movie?.let { liveData.postValue(State.Result(it)) }
-            liveData.value = State.HideLoading
-        }
-    }
-
-    override fun handleError(e: Throwable) {
-        liveData.value =
-            State.HideLoading
-        if (e is NoConnectionException) {
-            liveData.value =
-                State.IntError(e.messageInt)
-        } else {
-            liveData.value =
-                State.Error(e.localizedMessage)
-        }
+        addDisposable(
+            movieDetailInteractor.getMovie(movieId)
+                .subscribeOn(Schedulers.io())
+                .map { movie -> State.Result(movie) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { liveData.value = State.ShowLoading }
+                .doFinally { liveData.value = State.HideLoading }
+                .subscribe(
+                    { result -> liveData.value = result },
+                    {}
+                )
+        )
     }
 
     sealed class State() {

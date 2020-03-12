@@ -7,8 +7,4 @@ class FavoriteMoviesViewModel(
     private val moviesRepository: MovieRepository
 ) : BaseViewModel() {
 
-    override fun handleError(e: Throwable) {
-
-    }
-
 }
