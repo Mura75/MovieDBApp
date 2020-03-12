@@ -3,6 +3,7 @@ package com.mobile.data.repository
 import com.google.gson.JsonObject
 import com.mobile.data.network.MovieApi
 import com.mobile.data.storage.LocalPrefStorage
+import io.reactivex.Single
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -11,6 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.reset
 import org.mockito.MockitoAnnotations
@@ -31,55 +33,70 @@ class UserRepositoryImplTest {
 
     lateinit var userRepository: UserRepositoryImpl
 
-    private lateinit var deferred: CompletableDeferred<Response<JsonObject>>
-
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        deferred = CompletableDeferred(Response.success(JsonObject()))
         userRepository = UserRepositoryImpl(movieApi, localPrefStorage)
-
     }
 
     @Test
     fun `user login`() {
-        runBlocking {
-            `when`(movieApi.login(
-                body = JsonObject().apply {
-                    addProperty("username", "qwerty@gmail.com")
-                    addProperty("password", "123456")
-                    addProperty("request_token", "request_token")
-                })
-            ).thenReturn(deferred)
-
-            val login = userRepository.login(
-                requestToken = "request_token",
-                username = "qwerty@gmail.com",
-                password = "123456"
-            )
-            assertEquals(login, false)
+        val body = JsonObject().apply {
+            addProperty("username", "qwerty@gmail.com")
+            addProperty("password", "123456")
+            addProperty("request_token", "request_token")
         }
+
+        val bodyResult = JsonObject().apply {
+            addProperty("request_token", "request_token")
+            addProperty("success", true)
+        }
+
+        `when`(movieApi.login(body = body))
+            .thenReturn(Single.just(Response.success(bodyResult)))
+
+        userRepository.login(
+            requestToken = "request_token",
+            username = "qwerty@gmail.com",
+            password = "123456"
+        ).test()
+            .assertResult(Pair("request_token", true))
+            .assertNoErrors()
     }
 
     @Test
     fun `create user request token`() {
-        runBlocking {
-            `when`(movieApi.createRequestToken())
-                .thenReturn(deferred)
-            val token = userRepository.createRequestToken()
-            assertEquals(token, "")
+        val resultBody = JsonObject().apply {
+            addProperty("request_token", "request_token_123")
         }
+
+        `when`(movieApi.createRequestToken())
+            .thenReturn(Single.just(Response.success(resultBody)))
+
+        userRepository.createRequestToken()
+            .test()
+            .assertResult("request_token_123")
+            .assertNoErrors()
     }
 
     @Test
     fun `create user session id`() {
-        runBlocking {
-            val body = JsonObject().apply {
-                addProperty("request_token", "token")
-            }
-            `when`(movieApi.createSession(body))
-                .thenReturn(deferred)
+        val body = JsonObject().apply {
+            addProperty("request_token", "token")
         }
+
+        val resultBody = JsonObject().apply {
+            addProperty("session_id", "session_id_123")
+        }
+
+        val response = Response.success(resultBody)
+        `when`(movieApi.createSession(body))
+            .thenReturn(Single.just(response))
+
+        userRepository.createSession("token")
+            .test()
+            .assertResult("session_id_123")
+            .assertNoErrors()
     }
 
     @Test
