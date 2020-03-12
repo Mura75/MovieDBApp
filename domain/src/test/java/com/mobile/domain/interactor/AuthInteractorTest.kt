@@ -8,8 +8,7 @@ import org.junit.Test
 
 class AuthInteractorTest {
 
-    private val userRepository =
-        UserRepositoryImplTest()
+    private val userRepository = UserRepositoryImplTest()
 
     private lateinit var authInteractor: AuthInteractor
 
@@ -20,13 +19,12 @@ class AuthInteractorTest {
 
     @Test
     fun `test user login pass`() {
-        val isAuthorized = runBlocking {
-            authInteractor.login(
-                requestToken = "request_token",
-                username = "qwerty@gmail.com",
-                password = "1234556"
-            )
-        }
-        assertEquals(isAuthorized, true)
+        authInteractor.login(
+            requestToken = "request_token",
+            username = "qwerty@gmail.com",
+            password = "1234556"
+        ).test()
+            .assertResult(Pair("request_token", true))
+            .assertNoErrors()
     }
 }
