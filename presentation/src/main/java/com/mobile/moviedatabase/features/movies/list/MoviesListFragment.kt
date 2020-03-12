@@ -73,6 +73,7 @@ class MoviesListFragment : BaseFragment() {
         bindViews(view)
         setAdapter()
         setData()
+        viewModel.loadMovies(page = currentPage)
     }
 
     override fun bindViews(view: View) = with(view) {

@@ -36,17 +36,13 @@ class AuthViewModel @Inject constructor(
                 .doFinally { liveData.value = State.HideLoading }
                 .subscribe(
                     { result ->
-                        Log.d("result_login", result.toString())
                         if (result) {
                             liveData.value = State.Login
                         } else {
                             liveData.value = State.Error("incorrect login or password")
                         }
                     },
-                    { error ->
-                        Log.d("result_login", error.toString())
-                        liveData.value = State.Error(error.localizedMessage)
-                    }
+                    { error -> liveData.value = State.Error(error.localizedMessage) }
                 )
         )
     }
