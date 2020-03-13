@@ -29,7 +29,7 @@ class MovieDetailViewModel @Inject constructor(
                 .doFinally { liveData.value = State.HideLoading }
                 .subscribe(
                     { result -> liveData.value = result },
-                    {}
+                    { error -> liveData.value = State.Error(error.localizedMessage) }
                 )
         )
     }

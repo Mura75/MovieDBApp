@@ -8,6 +8,8 @@ import androidx.lifecycle.Observer
 import com.mobile.domain.Movie
 import com.mobile.domain.interactor.MovieDetailInteractor
 import com.mobile.moviedatabase.CoroutinesTestRule
+import com.mobile.moviedatabase.RxRule
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -28,7 +30,7 @@ class MovieDetailViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
-    val coroutinesTestRule = CoroutinesTestRule()
+    val rxRule = RxRule()
 
     @Mock
     lateinit var lifecycleOwner: LifecycleOwner
@@ -53,20 +55,26 @@ class MovieDetailViewModelTest {
     }
 
     @Test
-    fun `get single movie detail`() {
+    fun `get single movie detail success`() {
         val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
-        runBlocking {
-            `when`(movieDetailInteractor.getMovie(1)).thenReturn(movie)
-            movieDetailViewModel.getMovieDetail(1)
-            inOrder(observer).verify(observer, times(1))
-                .onChanged(MovieDetailViewModel.State.ShowLoading)
-            Thread.sleep(1000)
-            inOrder(movieDetailInteractor).verify(movieDetailInteractor).getMovie(1)
-            inOrder(observer).verify(observer, times(1))
-                .onChanged(MovieDetailViewModel.State.Result(movie))
-            inOrder(observer).verify(observer, times(1))
-                .onChanged(MovieDetailViewModel.State.HideLoading)
-        }
+        `when`(movieDetailInteractor.getMovie(1))
+            .thenReturn(Single.just(movie))
+
+        movieDetailViewModel.getMovieDetail(1)
+        verify(observer).onChanged(MovieDetailViewModel.State.ShowLoading)
+        verify(observer).onChanged(MovieDetailViewModel.State.Result(movie))
+        verify(observer).onChanged(MovieDetailViewModel.State.HideLoading)
+    }
+
+    @Test
+    fun `get single movie detail error`() {
+        `when`(movieDetailInteractor.getMovie(1))
+            .thenReturn(Single.error(Throwable("connection error")))
+
+        movieDetailViewModel.getMovieDetail(1)
+        verify(observer).onChanged(MovieDetailViewModel.State.ShowLoading)
+        verify(observer).onChanged(MovieDetailViewModel.State.HideLoading)
+        verify(observer).onChanged(MovieDetailViewModel.State.Error("connection error"))
     }
 
     @After

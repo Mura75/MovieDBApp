@@ -8,6 +8,8 @@ import androidx.lifecycle.Observer
 import com.mobile.domain.Movie
 import com.mobile.domain.interactor.GetMoviesInteractor
 import com.mobile.moviedatabase.CoroutinesTestRule
+import com.mobile.moviedatabase.RxRule
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -28,7 +30,7 @@ class MovieListViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
-    val coroutinesTestRule = CoroutinesTestRule()
+    val rxRule = RxRule()
 
     @Mock
     lateinit var lifecycleOwner: LifecycleOwner
@@ -53,24 +55,36 @@ class MovieListViewModelTest {
     }
 
     @Test
-    fun `load movies first page`() {
+    fun `load movies first page with successs`() {
         val moviesList = listOf(
                 Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
         )
         val pair: Pair<Int, List<Movie>> = Pair(1, moviesList)
-        runBlocking {
-            `when`(getMoviesInteractor.getMovies(page = 1)).thenReturn(pair)
-            moviesListViewModel.loadMovies(page = 1)
-            verify(observer, times(2))
-                    .onChanged(MovieListViewModel.State.ShowLoading)
-            verify(getMoviesInteractor, times(2)).getMovies(1)
-            verify(observer).onChanged(MovieListViewModel.State.Result(
-                    totalPage = pair.first,
-                    list = pair.second)
+        `when`(getMoviesInteractor.getMovies(page = 1))
+            .thenReturn(Single.just(pair))
+
+        moviesListViewModel.loadMovies(page = 1)
+
+        verify(observer).onChanged(MovieListViewModel.State.ShowLoading)
+        verify(observer).onChanged(
+            MovieListViewModel.State.Result(
+                totalPage = pair.first,
+                list = pair.second
             )
-            verify(observer, times(2))
-                    .onChanged(MovieListViewModel.State.HideLoading)
-        }
+        )
+        verify(observer).onChanged(MovieListViewModel.State.HideLoading)
+    }
+
+    @Test
+    fun `load movies first page with error`() {
+        `when`(getMoviesInteractor.getMovies(page = 1))
+            .thenReturn(Single.error(Throwable("connection error")))
+
+        moviesListViewModel.loadMovies(page = 1)
+
+        verify(observer).onChanged(MovieListViewModel.State.ShowLoading)
+        verify(observer).onChanged(MovieListViewModel.State.HideLoading)
+        verify(observer).onChanged(MovieListViewModel.State.Error("connection error"))
     }
 
     @After
