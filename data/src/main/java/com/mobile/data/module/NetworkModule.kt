@@ -31,6 +31,8 @@ open class NetworkModule(private val context: Context) {
         private const val CONNECTION_INTERCEPTOR = "connection_interceptor"
         private const val AUTH_INTERCEPTOR = "auth_interceptor"
         private const val LOGGING_INTERCEPTOR = "logging_interceptor"
+
+        private const val TIMEOUT = 60L
     }
 
     @Provides
@@ -62,8 +64,8 @@ open class NetworkModule(private val context: Context) {
         @Named(LOGGING_INTERCEPTOR) httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(60L, TimeUnit.SECONDS)
-            .readTimeout(60L, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(connectionCheckerInterceptor)
             .addInterceptor(authInterceptor)
         if (BuildConfig.DEBUG) {

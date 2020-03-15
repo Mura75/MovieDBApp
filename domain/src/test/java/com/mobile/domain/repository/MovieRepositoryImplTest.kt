@@ -1,15 +1,20 @@
 package com.mobile.domain.repository
 
 import com.mobile.domain.Movie
+import io.reactivex.Single
 
 class MovieRepositoryImplTest : MovieRepository {
 
-    override suspend fun getMovies(page: Int): Pair<Int, List<Movie>> {
-        val movies = listOf(Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring"))
-        return Pair(1, movies)
+    override fun getMovies(page: Int): Single<Pair<Int, List<Movie>>> {
+        val movies = listOf(
+            Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        )
+        val pair = Pair(1, movies)
+        return Single.just(pair)
     }
 
-    override suspend fun getMovie(movieId: Int): Movie? {
-        return Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+    override fun getMovie(movieId: Int): Single<Movie> {
+        val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        return Single.just(movie)
     }
 }

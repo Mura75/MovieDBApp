@@ -20,10 +20,6 @@ class MovieListViewModel @Inject constructor(
 
     val liveData = MutableLiveData<State>()
 
-    init {
-        loadMovies()
-    }
-
     fun loadMovies(page: Int = 1) {
         addDisposable(
             getMoviesInteractor.getMovies(page)
@@ -40,7 +36,7 @@ class MovieListViewModel @Inject constructor(
                 .doFinally { liveData.value = State.HideLoading }
                 .subscribe(
                     { result -> liveData.value = result },
-                    {}
+                    { error -> liveData.value = State.Error(error.localizedMessage) }
                 )
         )
     }

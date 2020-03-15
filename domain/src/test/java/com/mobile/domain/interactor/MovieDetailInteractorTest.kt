@@ -19,10 +19,21 @@ class MovieDetailInteractorTest {
     }
 
     @Test
-    fun getMovie() {
-        runBlocking {
-            val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
-            assertEquals(movieDetailInteractor.getMovie(1), movie)
-        }
+    fun `get movie`() {
+        val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        movieDetailInteractor.getMovie(1)
+            .test()
+            .assertResult(movie)
+            .assertNoErrors()
+    }
+
+    @Test
+    fun `get movie failed`() {
+        val movie = Movie(id = 1, adult = false, popularity = 9.0, title = "Lord of the ring")
+        movieDetailInteractor.getMovie(1)
+            .test()
+            .assertResult(movie)
+            .assertNoErrors()
+            .assertValue(movie)
     }
 }
