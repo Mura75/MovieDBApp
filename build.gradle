@@ -5,12 +5,15 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
 
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.2.0-rc04"
+        //classpath "gradle.plugin.com.betomorrow.gradle:appcenter-plugin:1.2.1"
+        //classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.14.1"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -21,6 +24,7 @@ plugins {
 }
 
 allprojects {
+    apply from: "$rootDir/detekt.gradle"
     repositories {
         google()
         jcenter()
@@ -32,20 +36,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-apply plugin: 'io.gitlab.arturbosch.detekt'
-
-
-detekt {
-    failFast = true // fail build on any finding
-    buildUponDefaultConfig = true // preconfigure defaults
-    config = files("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
-    baseline = file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
-
-    reports {
-        html.enabled = true // observe findings in your browser with structure and code snippets
-        xml.enabled = true // checkstyle like format mainly for integrations like Jenkins
-        txt.enabled = true // similar to the console output, contains issue signature to manually edit baseline files
-    }
-}
+apply from: "$rootDir/pipeline.gradle.kts"
 
 tasks.detekt.jvmTarget = "1.8"
